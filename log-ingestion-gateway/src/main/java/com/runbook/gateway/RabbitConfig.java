@@ -1,5 +1,6 @@
 package com.runbook.gateway;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -11,15 +12,14 @@ public class RabbitConfig {
 
     private String queueName = "log.ingestion.queue";
 
-    // 1. Ensures the queue exists in RabbitMQ
     @Bean
     public Queue logQueue() {
         return new Queue(queueName, true); 
     }
 
-    // 2. THIS IS THE CRITICAL FIX: Tells RabbitTemplate to use JSON
+    // Yahan humne Spring ka smart 'ObjectMapper' pass kar diya!
     @Bean
-    public MessageConverter jsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
+    public MessageConverter jsonMessageConverter(ObjectMapper objectMapper) {
+        return new Jackson2JsonMessageConverter(objectMapper);
     }
 }
